@@ -1,0 +1,22 @@
+{
+  "name": "matador",
+  "description": "An interactive music visualizer",
+  "main": "index.js",
+  "authors": [
+    "Cameron Edwards"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "lodash": "^4.11.1",
+    "three.js": "threejs#*",
+    "three.js-controls": "^0.0.67"
+  }
+}
