@@ -8,7 +8,7 @@ var scene,
     delta,
     step, // the distance to move forward each frame
     soundBuckets = [],
-    currentPattern = function() {},
+    currentPattern,
     movespeed = 0.1,
     mousepos = {
         x: 0,
@@ -36,7 +36,7 @@ var scene,
 })();
 
 function clocktick() {
-    //time = clock.elapsedTime;
+    time = clock.elapsedTime;
     delta = clock.getDelta();
     //step = delta * movespeed;
     timebuff += delta;

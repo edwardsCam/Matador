@@ -6,10 +6,10 @@ var lineWave = blankPattern({
 });
 
 (function() {
-    var p, // params shorthand
-        waveUpdateTime, // the amount of time between updates on the wave
-        waveReach, // number of levels back the wave has reached. This is only useful at the beginning, before the wave has first reached the very end.
-        lines; // array of geometry objects
+    var p = lineWave.params, // params shorthand
+        waveUpdateTime = p.wavetime / p.resolution, // the amount of time between updates on the wave
+        waveReach = 0, // number of levels back the wave has reached. This is only useful at the beginning, before the wave has first reached the very end.
+        lines = []; // array of geometry objects
 
     lineWave.init = function() {
         for (var x = 0; x < p.rowSize; x++) {
@@ -22,22 +22,22 @@ var lineWave = blankPattern({
                     twoPoint(z, 0, -2, p.resolution, 2)));
             }
             //soundBuckets.push(0);
-            scene.add(new THREE.Line(lineGeom, new THREE.LineBasicMaterial({
+            var line = new THREE.Line(lineGeom, new THREE.LineBasicMaterial({
                 color: 0x00afd8
-            })));
-            lines.push(lineGeom);
+            }));
+            scene.add(line);
+            lines.push(line);
         }
-
-        p = lineWave.params;
-        waveUpdateTime = p.wavetime / p.resolution;
-        waveReach = 0;
-        lines = [];
     };
-    
+
     lineWave.destroy = function() {
         for (var i = 0; i < p.rowSize; i++) {
-            lines[i].dispose();
+            reset(lines[i].geometry);
+            scene.remove(lines[i]);
+            lines[i] = undefined;
         }
+        lines = undefined;
+        timebuff = 0;
     };
 
     lineWave.draw = function() {
@@ -48,18 +48,18 @@ var lineWave = blankPattern({
             _.map(lines, setWaveVal);
             for (var i = waveReach; i > 0; i--) {
                 _.map(lines, function(l) {
-                    l.vertices[i].y = l.vertices[i - 1].y;
+                    l.geometry.vertices[i].y = l.geometry.vertices[i - 1].y;
                 });
             }
             _.map(lines, markForUpdate);
         }
 
         function setWaveVal(l) {
-            l.vertices[0].y = Math.random() * p.amplitude;
+            l.geometry.vertices[0].y = Math.random() * p.amplitude;
         }
 
         function markForUpdate(l) {
-            l.verticesNeedUpdate = true;
+            l.geometry.verticesNeedUpdate = true;
         }
     };
 })();

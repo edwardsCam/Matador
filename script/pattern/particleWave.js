@@ -5,9 +5,11 @@ var particleWave = blankPattern({
 });
 
 (function() {
-    var p, // params shorthand
-        waveUpdateTime, // the amount of time between updates on the wave
-        waveReach; // number of levels back the wave has reached. This is only useful at the beginning, before the wave has first reached the very end.
+    var p = particleWave.params, // params shorthand
+        waveUpdateTime = p.wavetime / p.rowSize, // the amount of time between updates on the wave
+        waveReach = 0, // number of levels back the wave has reached. This is only useful at the beginning, before the wave has first reached the very end.
+        particles,
+        particleSystem;
 
     particleWave.init = function() {
         particles = new THREE.Geometry();
@@ -20,19 +22,19 @@ var particleWave = blankPattern({
             }
             //soundBuckets.push(0);
         }
-        scene.add(new THREE.Points(particles, new THREE.PointsMaterial({
+        particleSystem = new THREE.Points(particles, new THREE.PointsMaterial({
             color: 0xFFFFFF,
             size: 0.005
-        })));
-
-        p = particleWave.params;
-        waveUpdateTime = p.wavetime / p.rowSize;
-        waveReach = 0;
+        }));
+        scene.add(particleSystem);
     };
 
     particleWave.destroy = function() {
         reset(particles);
-        particles.dispose();
+        scene.remove(particleSystem);
+        particleSystem = undefined;
+        particles = undefined;
+        timebuff = 0;
     };
 
     particleWave.draw = function() {

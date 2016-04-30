@@ -1,14 +1,19 @@
 loadPattern(particleWave);
 animate();
 
+var test = true;
+
 function animate() {
     clocktick();
-    currentPattern();
+    currentPattern.draw();
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
 
 function loadPattern(pattern) {
-    pattern.init();
-    currentPattern = pattern.draw;
+    if (currentPattern) {
+        currentPattern.destroy();
+    }
+    currentPattern = pattern;
+    currentPattern.init();
 }
