@@ -24,6 +24,10 @@ var particleWave = blankPattern();
             size: 0.005
         })));
     };
+    particleWave.destroy = function() {
+        reset(particles);
+        particles.dispose();
+    };
     particleWave.draw = function() {
         if (timebuff >= waveUpdateTime) {
             timebuff -= waveUpdateTime;
