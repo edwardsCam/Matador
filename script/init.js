@@ -55,8 +55,15 @@ var scene,
 
 function clocktick() {
     time = clock.elapsedTime;
-    sinetime = time * Math.PI * 2;
     delta = clock.getDelta();
     step = delta * movespeed;
     timebuff += delta;
+}
+
+function blankPattern() {
+    return {
+        init: function() {},
+        destroy: function() {},
+        draw: function() {}
+    }
 }

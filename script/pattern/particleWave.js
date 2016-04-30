@@ -1,7 +1,4 @@
-var particleWave = {
-    init: function() {},
-    draw: function() {}
-};
+var particleWave = blankPattern();
 
 (function() {
     var wavetime = 2, // time, in seconds, it takes the wave to reach the end
