@@ -1,4 +1,4 @@
-loadPattern(lineWave);
+loadPattern(particleWave);
 animate();
 
 function animate() {

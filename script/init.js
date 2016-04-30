@@ -36,14 +36,15 @@ var scene,
 })();
 
 function clocktick() {
-    time = clock.elapsedTime;
+    //time = clock.elapsedTime;
     delta = clock.getDelta();
-    step = delta * movespeed;
+    //step = delta * movespeed;
     timebuff += delta;
 }
 
-function blankPattern() {
+function blankPattern(prms) {
     return {
+        params: prms ? prms : {},
         init: function() {},
         destroy: function() {},
         draw: function() {}
