@@ -1,4 +1,4 @@
-loadPattern(particleWave);
+loadPattern(lineWave);
 animate();
 
 var test = true;
@@ -6,6 +6,8 @@ var test = true;
 function animate() {
     clocktick();
     currentPattern.draw();
+    controls.rotateLeft(0.002);
+    controls.update();
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }

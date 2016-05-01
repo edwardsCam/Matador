@@ -2,6 +2,7 @@ var scene,
     camera,
     renderer,
     geometry,
+    controls,
     clock,
     time,
     timebuff = 0, // a buffer, to be used for time-based increment stuff
@@ -21,10 +22,12 @@ var scene,
     renderer = new THREE.WebGLRenderer();
     clock = new THREE.Clock();
     geometry = new THREE.Geometry();
+    controls = new THREE.OrbitControls(camera);
 
     camera.position.z = -3;
+    camera.position.y = 1;
     camera.rotation.y = Math.PI;
-    camera.position.y = 0.25;
+    camera.rotation.x = Math.PI / 6;
     geometry.dynamic = true;
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x444444, 1);

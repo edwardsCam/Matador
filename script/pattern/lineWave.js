@@ -1,7 +1,7 @@
 var lineWave = blankPattern({
-    rowSize: 16, // number of waves
-    resolution: 256, // quantization level of each wave
-    wavetime: 4, // time, in seconds, it takes the wave to reach the end
+    rowSize: 128, // number of waves
+    resolution: 128, // quantization level of each wave
+    wavetime: 2.4, // time, in seconds, it takes the wave to reach the end
     amplitude: 0.05,
 });
 
@@ -21,7 +21,6 @@ var lineWave = blankPattern({
                     0,
                     twoPoint(z, 0, -2, p.resolution, 2)));
             }
-            //soundBuckets.push(0);
             var line = new THREE.Line(lineGeom, new THREE.LineBasicMaterial({
                 color: 0x00afd8
             }));
@@ -54,8 +53,8 @@ var lineWave = blankPattern({
             _.map(lines, markForUpdate);
         }
 
-        function setWaveVal(l) {
-            l.geometry.vertices[0].y = Math.random() * p.amplitude;
+        function setWaveVal(l, i) {
+            l.geometry.vertices[0].y = soundBuckets[i] / 1024;
         }
 
         function markForUpdate(l) {
