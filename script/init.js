@@ -5,7 +5,8 @@ var scene,
     controls,
     clock,
     time,
-    timebuff = 0, // a buffer, to be used for time-based increment stuff
+    timebuff1 = 0, // a buffer, to be used for time-based increment stuff,
+    timebuff2 = 0,
     delta,
     step, // the distance to move forward each frame
     soundBuckets = [],
@@ -42,7 +43,10 @@ function clocktick() {
     time = clock.elapsedTime;
     delta = clock.getDelta();
     //step = delta * movespeed;
-    timebuff += delta;
+    timebuff1 += delta;
+    if (audioStarted) {
+        timebuff2 += delta;
+    }
 }
 
 function blankPattern(prms) {

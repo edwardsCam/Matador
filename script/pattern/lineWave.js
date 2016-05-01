@@ -2,7 +2,9 @@ var lineWave = blankPattern({
     rowSize: 128, // number of waves
     resolution: 128, // quantization level of each wave
     wavetime: 2.4, // time, in seconds, it takes the wave to reach the end
-    amplitude: 0.05,
+    amplitude: 0.5,
+    xwidth: 3,
+    zwidth: 6
 });
 
 (function() {
@@ -17,9 +19,9 @@ var lineWave = blankPattern({
             lineGeom.dynamic = true;
             for (var z = 0; z <= p.resolution; z++) {
                 lineGeom.vertices.push(new THREE.Vector3(
-                    twoPoint(x, 0, -1, p.rowSize - 1, 1),
+                    twoPoint(x, 0, -p.xwidth, p.rowSize - 1, p.xwidth),
                     0,
-                    twoPoint(z, 0, -2, p.resolution, 2)));
+                    twoPoint(z, 0, -p.zwidth, p.resolution, p.zwidth)));
             }
             var line = new THREE.Line(lineGeom, new THREE.LineBasicMaterial({
                 color: 0x00afd8
@@ -28,7 +30,6 @@ var lineWave = blankPattern({
             lines.push(line);
         }
     };
-
     lineWave.destroy = function() {
         for (var i = 0; i < p.rowSize; i++) {
             reset(lines[i].geometry);
@@ -36,29 +37,35 @@ var lineWave = blankPattern({
             lines[i] = undefined;
         }
         lines = undefined;
-        timebuff = 0;
+        timebuff1 = 0;
     };
-
     lineWave.draw = function() {
-        if (timebuff >= waveUpdateTime) {
-            timebuff -= waveUpdateTime;
-            if (waveReach < p.resolution) waveReach++;
+        if (timebuff1 > waveUpdateTime) {
+            timebuff1 -= waveUpdateTime;
+            waveTick();
+        }
+        if (timebuff2 > beatTime) {
+            timebuff2 -= beatTime;
+            beatTick();
+        }
 
+        function waveTick() {
+            if (waveReach < p.resolution) waveReach++;
             _.map(lines, setWaveVal);
             for (var i = waveReach; i > 0; i--) {
-                _.map(lines, function(l) {
-                    l.geometry.vertices[i].y = l.geometry.vertices[i - 1].y;
-                });
+                for (var j = 0; j < p.rowSize; j++) {
+                    lines[j].geometry.vertices[i].y = lines[j].geometry.vertices[i - 1].y;
+                    if (i === 1) lines[j].geometry.verticesNeedUpdate = true;
+                }
             }
-            _.map(lines, markForUpdate);
+            function setWaveVal(l, i) {
+                var v = l.geometry.vertices[0];
+                v.y = p.amplitude * soundBuckets[i] * 2 / fftSize;
+                v.y = isNaN(v.y) ? 0 : v.y;
+            }
         }
+        function beatTick() {
 
-        function setWaveVal(l, i) {
-            l.geometry.vertices[0].y = soundBuckets[i] / 1024;
-        }
-
-        function markForUpdate(l) {
-            l.geometry.verticesNeedUpdate = true;
         }
     };
 })();
