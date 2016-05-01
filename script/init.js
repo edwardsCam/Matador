@@ -5,6 +5,7 @@ var scene,
     controls,
     clock,
     time,
+    sinetime,
     timebuff1 = 0, // a buffer, to be used for time-based increment stuff,
     timebuff2 = 0,
     delta,
@@ -32,6 +33,7 @@ var scene,
     geometry.dynamic = true;
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x444444, 1);
+    renderer.localClippingEnabled = true;
 
     document.body.appendChild(renderer.domElement);
     document.addEventListener('mousemove', function(e) {
@@ -42,6 +44,7 @@ var scene,
 function clocktick() {
     time = clock.elapsedTime;
     delta = clock.getDelta();
+    sinetime = time * Math.PI * 2;
     //step = delta * movespeed;
     timebuff1 += delta;
     if (audioStarted) {
