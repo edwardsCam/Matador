@@ -49,7 +49,7 @@ var audioContext,
         audioSource.connect(audioContext.destination);
 
         sourceJs.onaudioprocess = audioProcess;
-        //play();
+        play();
 
         function audioProcess(e) {
             soundBuckets = new Uint8Array(audioAnalyser.frequencyBinCount);

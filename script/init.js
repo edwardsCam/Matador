@@ -26,10 +26,9 @@ var scene,
     geometry = new THREE.Geometry();
     controls = new THREE.OrbitControls(camera);
 
-    camera.position.z = -3;
-    camera.position.y = 1;
-    camera.rotation.y = Math.PI;
-    camera.rotation.x = Math.PI / 6;
+    camera.position.z = -7;
+    camera.position.x = -1;
+    camera.position.y = 2;
     geometry.dynamic = true;
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x444444, 1);
