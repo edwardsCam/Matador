@@ -19,7 +19,6 @@
     "commit": "1546a91a96205aff53b5823f6428e541215ba2ef"
   },
   "_source": "https://github.com/noseglid/three.js-controls.git",
-  "_target": "^0.0.67",
-  "_originalSource": "three.js-controls",
-  "_direct": true
+  "_target": "*",
+  "_originalSource": "three.js-controls"
 }

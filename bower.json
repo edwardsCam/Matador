@@ -15,8 +15,9 @@
     "tests"
   ],
   "dependencies": {
-    "lodash": "^4.11.1",
-    "three.js": "0.76.0",
-    "three.js-controls": "^0.0.67"
+    "jquery": null,
+    "lodash": null,
+    "three.js": null,
+    "three.js-controls": null
   }
 }

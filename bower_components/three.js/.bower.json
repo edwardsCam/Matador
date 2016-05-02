@@ -27,6 +27,6 @@
     "commit": "4b301cad0849c382d1375d974e80b6c262e13583"
   },
   "_source": "https://github.com/jiyinyiyong/three.js.git",
-  "_target": "0.76.0",
+  "_target": "*",
   "_originalSource": "three.js"
 }
