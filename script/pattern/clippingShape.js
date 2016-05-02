@@ -1,13 +1,15 @@
 var clippingShape = blankPattern({
+    shapeColor: 0xee0a10,
+    shapeShine: 100,
     bouncePeriod: 0.2,
     bounceOffset: 0.95
 });
 
 (function() {
     var p = clippingShape.params,
+        clipPlanes,
         clipMaterial,
         object,
-        Planes,
         dirLight,
         transform,
         tmpMatrix;
@@ -20,36 +22,32 @@ var clippingShape = blankPattern({
                 new THREE.Vector3(0, -1, -Math.SQRT1_2)
             ],
             indices = [0, 1, 2, 0, 2, 3, 0, 3, 1, 1, 3, 2];
-        Planes = planesFromMesh(vertices, indices);
-        dirLight = new THREE.DirectionalLight(0x55505a, 1);
-        dirLight.position.set(0, 2, 0);
-        dirLight.castShadow = true;
-
+        clipPlanes = planesFromMesh(vertices, indices);
         clipMaterial = new THREE.MeshPhongMaterial({
-            color: 0xee0a10,
-            shininess: 100,
+            color: p.shapeColor,
+            shininess: p.shapeShine,
             side: THREE.DoubleSide,
-            clippingPlanes: createPlanes(Planes.length),
-            clipShadows: true
+            clippingPlanes: clipPlanes
         });
         object = new THREE.Group();
         var geo = new THREE.BoxBufferGeometry(0.18, 0.18, 0.18);
-        for (var z = -2; z <= 2; ++z) {
-            for (var y = -2; y <= 2; ++y) {
-                for (var x = -2; x <= 2; ++x) {
+        for (var z = -0.4; z <= 0.4; z += 0.2) {
+            for (var y = -0.4; y <= 0.4; y += 0.2) {
+                for (var x = -0.4; x <= 0.4; x += 0.2) {
                     var mesh = new THREE.Mesh(geo, clipMaterial);
-                    mesh.position.set(x / 5, y / 5, z / 5);
-                    mesh.castShadow = true;
+                    mesh.position.set(x, y, z);
                     object.add(mesh);
                 }
             }
         }
 
-        scene.add(dirLight);
-        scene.add(object);
-
         transform = new THREE.Matrix4();
         tmpMatrix = new THREE.Matrix4();
+        dirLight = new THREE.DirectionalLight(0x55505a, 1);
+        dirLight.position.set(0, 2, 0);
+
+        scene.add(dirLight);
+        scene.add(object);
 
         function planesFromMesh(vertices, indices) {
             // creates a clipping volume from a convex triangular mesh
@@ -65,19 +63,11 @@ var clippingShape = blankPattern({
             }
             return result;
         }
-
-        function createPlanes(n) {
-            // creates an array of n uninitialized plane objects
-            var result = new Array(n);
-            for (var i = 0; i !== n; ++i)
-                result[i] = new THREE.Plane();
-            return result;
-        }
     };
     clippingShape.destroy = function() {
         reset(clipMaterial);
         reset(object);
-        reset(Planes);
+        reset(clipPlanes);
         reset(dirLight);
         reset(transform);
         reset(tmpMatrix);
@@ -87,10 +77,11 @@ var clippingShape = blankPattern({
     };
     clippingShape.draw = function() {
         object.rotation.y = time * 0.2;
+        object.rotation.x = time * 0.1;
         var bouncy = Math.cos(sinetime * p.bouncePeriod) + p.bounceOffset;
-        transform.copy(object.matrix);
-        transform.multiply(tmpMatrix.makeScale(bouncy, bouncy, bouncy));
-        assignTransformedPlanes(clipMaterial.clippingPlanes, Planes, transform);
+        //transform.copy(object.matrix);
+        //transform.multiply(tmpMatrix.makeScale(bouncy, bouncy, bouncy));
+        assignTransformedPlanes(clipMaterial.clippingPlanes, clipPlanes, transform);
 
         function assignTransformedPlanes(planesOut, planesIn, matrix) {
             // sets an array of existing planes to transformed 'planesIn'
