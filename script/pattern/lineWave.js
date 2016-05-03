@@ -37,16 +37,16 @@ var lineWave = blankPattern({
             lines[i] = undefined;
         }
         lines = undefined;
-        timebuff1 = 0;
+        timebuff[0] = 0;
     };
     lineWave.draw = function() {
-        if (timebuff1 > waveUpdateTime) {
-            timebuff1 -= waveUpdateTime;
+        if (timebuff[0] > waveUpdateTime) {
+            timebuff[0] -= waveUpdateTime;
             waveTick();
         }
         /*
-        if (timebuff2 > beatTime) {
-            timebuff2 -= beatTime;
+        if (timebuff[1] > beatTime) {
+            timebuff[1] -= beatTime;
             beatTick();
         }
         */

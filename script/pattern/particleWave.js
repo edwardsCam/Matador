@@ -34,12 +34,12 @@ var particleWave = blankPattern({
         scene.remove(particleSystem);
         particleSystem = undefined;
         particles = undefined;
-        timebuff = 0;
+        timebuff[0] = 0;
     };
 
     particleWave.draw = function() {
-        if (timebuff >= waveUpdateTime) {
-            timebuff -= waveUpdateTime;
+        if (timebuff[0] >= waveUpdateTime) {
+            timebuff[0] -= waveUpdateTime;
             if (waveReach < p.rowSize - 1) waveReach++;
             for (var i = 0; i < p.rowSize; i++) {
                 particles.vertices[i].y = Math.random() * p.amplitude;
