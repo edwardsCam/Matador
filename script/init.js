@@ -9,7 +9,7 @@ var scene = new THREE.Scene(),
     timebuff = [0, 0], // buffers to be used for time-based increment stuff
     delta = 0,
     step = 0, // the distance to move forward each frame
-    soundBuckets = [], // buckets for sound values at each quantization levels
+    soundBuckets = [], // buckets for sound values at each quantization level
     currentPattern = null,
     movespeed = 0.1,
     mousepos = {
@@ -17,7 +17,7 @@ var scene = new THREE.Scene(),
         y: 0
     };
 
-camera.position.z = -7;
+camera.position.z = -3;
 camera.position.x = -1;
 camera.position.y = 2;
 geometry.dynamic = true;

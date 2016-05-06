@@ -20,7 +20,6 @@ var particleWave = blankPattern({
                     0,
                     twoPoint(z, 0, -2, p.rowSize - 1, 2)));
             }
-            //soundBuckets.push(0);
         }
         particleSystem = new THREE.Points(particles, new THREE.PointsMaterial({
             color: 0xFFFFFF,

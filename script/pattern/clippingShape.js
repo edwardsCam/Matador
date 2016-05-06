@@ -58,8 +58,7 @@ var clippingShape = blankPattern({
                 var a = vertices[indices[j]],
                     b = vertices[indices[j + 1]],
                     c = vertices[indices[j + 2]];
-                result[i] = new THREE.Plane().
-                setFromCoplanarPoints(a, b, c);
+                result[i] = new THREE.Plane().setFromCoplanarPoints(a, b, c);
             }
             return result;
         }

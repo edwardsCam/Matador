@@ -50,27 +50,25 @@ var lineWave = blankPattern({
             beatTick();
         }
         */
-
-        function waveTick() {
-            if (waveReach < p.resolution) waveReach++;
-            _.map(lines, setWaveVal);
-            for (var i = waveReach; i > 0; i--) {
-                for (var j = 0; j < p.rowSize; j++) {
-                    var g = lines[j].geometry;
-                    g.vertices[i].dval = g.vertices[i - 1].dval;
-                    g.vertices[i].y = g.vertices[i].dval * (1 - (i / waveReach));
-                    if (i === 1) g.verticesNeedUpdate = true;
-                }
-            }
-            function setWaveVal(l, i) {
-                var v = l.geometry.vertices[0];
-                v.y = p.amplitude * soundBuckets[i] * 2 / fftSize;
-                v.y = isNaN(v.y) ? 0 : v.y;
-                v.dval = v.y;
-            }
-        }
-        function beatTick() {
-
-        }
     };
+
+    function waveTick() {
+        if (waveReach < p.resolution) waveReach++;
+        _.map(lines, setWaveVal);
+        for (var i = waveReach; i > 0; i--) {
+            for (var j = 0; j < p.rowSize; j++) {
+                var g = lines[j].geometry;
+                g.vertices[i].dval = g.vertices[i - 1].dval;
+                g.vertices[i].y = g.vertices[i].dval * (1 - (i / waveReach));
+                if (i === 1) g.verticesNeedUpdate = true;
+            }
+        }
+        function setWaveVal(l, i) {
+            var v = l.geometry.vertices[0];
+            v.y = p.amplitude * soundBuckets[i] * 2 / fftSize;
+            v.y = isNaN(v.y) ? 0 : v.y;
+            v.dval = v.y;
+        }
+    }
+    //function beatTick() {}
 })();

@@ -54,13 +54,11 @@ var audioContext,
         function audioProcess(e) {
             soundBuckets = new Uint8Array(audioAnalyser.frequencyBinCount);
             audioAnalyser.getByteFrequencyData(soundBuckets);
-            /*
             boost = 0;
             for (var i = 0; i < soundBuckets.length; i++) {
                 boost += soundBuckets[i];
             }
             boost = boost / soundBuckets.length;
-            */
         }
     }
 

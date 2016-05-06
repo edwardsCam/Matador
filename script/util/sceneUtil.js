@@ -33,5 +33,5 @@ function blankPattern(prms) {
         init: function() {}, // one-time function for building necessary objects
         destroy: function() {}, // one-time function for clearing memory and resetting any variables that may be used by another pattern
         draw: function() {} // called every frame. responsible for altering model, not view.
-    }
+    };
 }
