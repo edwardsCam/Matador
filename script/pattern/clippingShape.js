@@ -82,6 +82,8 @@ var clippingShape = blankPattern({
         //transform.multiply(tmpMatrix.makeScale(bouncy, bouncy, bouncy));
         assignTransformedPlanes(clipMaterial.clippingPlanes, clipPlanes, transform);
 
+        console.log(audioListener.gain);
+
         function assignTransformedPlanes(planesOut, planesIn, matrix) {
             // sets an array of existing planes to transformed 'planesIn'
             for (var i = 0, n = planesIn.length; i !== n; ++i) {
