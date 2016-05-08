@@ -1,12 +1,14 @@
 var floatingIdol = blankPattern({
     shapeColor: 0xee0a10,
     shapeShine: 100,
-    lightCycleTime: 16
+    lightCycleTime: 16,
+    rowSize: 6,
+    cubeSize: 0.35,
+    spread: 1
 });
 
 (function() {
     var p = floatingIdol.params, // params shorthand
-        vertices,
         indices,
         clipPlanes,
         clipMaterial,
@@ -15,18 +17,18 @@ var floatingIdol = blankPattern({
 
     floatingIdol.init = function() {
         indices = getIndices();
-        vertices = getVertices(0.0001);
         clipMaterial = new THREE.MeshPhongMaterial({
             color: p.shapeColor,
             shininess: p.shapeShine,
             side: THREE.DoubleSide,
-            clippingPlanes: buildPlanes(vertices, indices)
+            clippingPlanes: buildPlanes(getVertices(0.0001), indices)
         });
         object = new THREE.Group();
-        var geo = new THREE.BoxBufferGeometry(0.18, 0.18, 0.18);
-        for (var z = -0.4; z <= 0.4; z += 0.2) {
-            for (var y = -0.4; y <= 0.4; y += 0.2) {
-                for (var x = -0.4; x <= 0.4; x += 0.2) {
+        var geo = new THREE.BoxBufferGeometry(p.cubeSize, p.cubeSize, p.cubeSize);
+        var dist = 2 * p.spread / (p.rowSize - 1);
+        for (var z = -p.spread; z <= p.spread; z += dist) {
+            for (var y = -p.spread; y <= p.spread; y += dist) {
+                for (var x = -p.spread; x <= p.spread; x += dist) {
                     var mesh = new THREE.Mesh(geo, clipMaterial);
                     mesh.position.set(x, y, z);
                     object.add(mesh);
@@ -42,8 +44,10 @@ var floatingIdol = blankPattern({
     };
 
     floatingIdol.draw = function() {
-        vertices = getVertices(boost / 200);
-        clipMaterial.clippingPlanes = buildPlanes(vertices, indices);
+        clipMaterial.clippingPlanes = buildPlanes(
+            getVertices((boostbuffer - (boostbuffer - boost)) / 100),
+            indices
+        );
         dirLight.position.x = Math.sin(sinetime / p.lightCycleTime);
         dirLight.position.z = Math.cos(sinetime / (p.lightCycleTime * 2));
         dirLight.position.y = Math.sin(sinetime / (p.lightCycleTime * 3));

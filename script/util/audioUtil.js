@@ -7,6 +7,7 @@ var sourceJs,
     audioAnalyser,
     beatTime = 60 / tempo,
     boost = 0,
+    boostbuffer,
     fftSize = 512,
     smooth = 0.6,
     audioStarted = false;
@@ -60,6 +61,12 @@ var sourceJs,
                 boost += soundBuckets[i];
             }
             boost = boost / soundBuckets.length;
+            if (boostbuffer == undefined) {
+                boostbuffer = boost;
+            }
+            if (Math.abs(boostbuffer - boost) > 2) {
+                boostbuffer = boost;
+            }
         }
     }
 
