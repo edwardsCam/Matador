@@ -26,6 +26,14 @@ renderer.setClearColor(0x444444, 1);
 renderer.localClippingEnabled = true;
 
 document.body.appendChild(renderer.domElement);
-document.addEventListener('mousemove', function(e) {
+document.addEventListener('mousemove', mouseMove);
+window.addEventListener('resize', resizeWindow, false);
+
+function mouseMove(e) {
     mousepos = normalizeScreenPos(e.clientX, e.clientY);
-});
+}
+function resizeWindow(e) {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
