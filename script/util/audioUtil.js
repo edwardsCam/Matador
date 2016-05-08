@@ -1,7 +1,8 @@
 var url = 'resources/audio/delicate_steve_tallest_heights.mp3',
     tempo = 105;
 
-var audioContext,
+var sourceJs,
+    audioContext,
     audioSource,
     audioAnalyser,
     beatTime = 60 / tempo,
@@ -33,7 +34,7 @@ var audioContext,
             return;
         }
 
-        var sourceJs = audioContext.createScriptProcessor(2048, 1, 1);
+        sourceJs = audioContext.createScriptProcessor(2048, 1, 1);
         sourceJs.buffer = buffer;
         sourceJs.connect(audioContext.destination);
         audioAnalyser = audioContext.createAnalyser();
