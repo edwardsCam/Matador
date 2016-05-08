@@ -23,13 +23,13 @@ var floatingIdol = blankPattern({
             side: THREE.DoubleSide,
             clippingPlanes: buildPlanes(getVertices(0.0001), indices)
         });
+        var box = new THREE.BoxBufferGeometry(p.cubeSize, p.cubeSize, p.cubeSize),
+            dist = p.spread * 2 / (p.rowSize - 1);
         object = new THREE.Group();
-        var geo = new THREE.BoxBufferGeometry(p.cubeSize, p.cubeSize, p.cubeSize);
-        var dist = 2 * p.spread / (p.rowSize - 1);
         for (var z = -p.spread; z <= p.spread; z += dist) {
             for (var y = -p.spread; y <= p.spread; y += dist) {
                 for (var x = -p.spread; x <= p.spread; x += dist) {
-                    var mesh = new THREE.Mesh(geo, clipMaterial);
+                    var mesh = new THREE.Mesh(box, clipMaterial);
                     mesh.position.set(x, y, z);
                     object.add(mesh);
                 }
@@ -53,7 +53,12 @@ var floatingIdol = blankPattern({
         dirLight.position.y = Math.sin(sinetime / (p.lightCycleTime * 3));
     };
 
-    floatingIdol.destroy = function() {};
+    floatingIdol.destroy = function() {
+        scene.remove(dirLight);
+        scene.remove(object);
+        reset(dirLight);
+        reset(object);
+    };
 
     function buildPlanes(vertices, indices) {
         var ret = [];
@@ -61,8 +66,9 @@ var floatingIdol = blankPattern({
             var v0 = indices[i][0],
                 v1 = indices[i][1],
                 v2 = indices[i][2];
-            var plane = new THREE.Plane().setFromCoplanarPoints(vertices[v0], vertices[v1], vertices[v2]);
-            ret.push(plane);
+            ret.push(
+                new THREE.Plane().setFromCoplanarPoints(vertices[v0], vertices[v1], vertices[v2])
+            );
         }
         return ret;
     }

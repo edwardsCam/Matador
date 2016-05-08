@@ -12,9 +12,10 @@
     // renders the view every frame
     function animate() {
         clocktick();
-        currentPattern.draw();
+        //camera.position.z += step;
         controls.rotateLeft(0.0007);
         controls.update();
+        currentPattern.draw();
         renderer.render(scene, camera);
         requestAnimationFrame(animate);
     }

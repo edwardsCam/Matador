@@ -60,7 +60,7 @@ var sourceJs,
             for (var i = 0; i < soundBuckets.length; i++) {
                 boost += soundBuckets[i];
             }
-            boost = boost / soundBuckets.length;
+            boost /= soundBuckets.length;
             if (boostbuffer == undefined) {
                 boostbuffer = boost;
             }
