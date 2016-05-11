@@ -3,8 +3,10 @@ var floatingIdol = blankPattern({
     shapeShine: 100,
     lightCycleTime: 16,
     rowSize: 6,
-    cubeSize: 0.35,
-    spread: 1
+    cubeSize: 0.3,
+    spread: 0.75,
+    particleCount: 1000,
+    particleSize: 0.05
 });
 
 (function() {
@@ -13,34 +15,97 @@ var floatingIdol = blankPattern({
         clipPlanes,
         clipMaterial,
         object,
-        dirLight;
+        lights,
+        particleSystems;
 
     floatingIdol.init = function() {
-        indices = getIndices();
-        clipMaterial = new THREE.MeshPhongMaterial({
-            color: p.shapeColor,
-            shininess: p.shapeShine,
-            side: THREE.DoubleSide,
-            clippingPlanes: buildPlanes(getVertices(0.0001), indices)
-        });
-        var box = new THREE.BoxBufferGeometry(p.cubeSize, p.cubeSize, p.cubeSize),
-            dist = p.spread * 2 / (p.rowSize - 1);
-        object = new THREE.Group();
-        for (var z = -p.spread; z <= p.spread; z += dist) {
-            for (var y = -p.spread; y <= p.spread; y += dist) {
-                for (var x = -p.spread; x <= p.spread; x += dist) {
-                    var mesh = new THREE.Mesh(box, clipMaterial);
-                    mesh.position.set(x, y, z);
-                    object.add(mesh);
-                }
-            }
+        indices = initIndices();
+        clipMaterial = initClipMaterial();
+        object = initShape();
+        particleSystems = initParticles();
+        lights = initLights();
+        addSceneObjects();
+
+        function addSceneObjects() {
+            scene.add(object);
+            for (var p = 0; p < particleSystems.length; p++) scene.add(particleSystems[p]);
+            for (var l = 0; l < lights.length; l++) scene.add(lights[l]);
         }
 
-        dirLight = new THREE.DirectionalLight(0x55505a, 2);
-        dirLight.position.set(1, 2, 0);
+        function initIndices() {
+            return [
+                [0, 2, 5],
+                [0, 4, 2],
+                [1, 2, 4],
+                [1, 5, 2],
+                [0, 5, 3],
+                [0, 3, 4],
+                [1, 3, 5],
+                [1, 4, 3]
+            ];
+        }
 
-        scene.add(dirLight);
-        scene.add(object);
+        function initClipMaterial() {
+            return new THREE.MeshPhongMaterial({
+                color: p.shapeColor,
+                shininess: p.shapeShine,
+                side: THREE.DoubleSide,
+                clippingPlanes: buildPlanes(getVertices(0.0001), indices)
+            });
+        }
+
+        function initShape() {
+            var ret = new THREE.Group(),
+                box = new THREE.BoxBufferGeometry(p.cubeSize, p.cubeSize, p.cubeSize),
+                dist = p.spread * 2 / (p.rowSize - 1);
+            for (var z = -p.spread; z <= p.spread; z += dist) {
+                for (var y = -p.spread; y <= p.spread; y += dist) {
+                    for (var x = -p.spread; x <= p.spread; x += dist) {
+                        var mesh = new THREE.Mesh(box, clipMaterial);
+                        mesh.position.set(x, y, z);
+                        ret.add(mesh);
+                    }
+                }
+            }
+            return ret;
+        }
+
+        function initLights() {
+            var dlight = new THREE.DirectionalLight(0x55505a, 2),
+                slight = new THREE.SpotLight(0xffffff);
+            dlight.position.set(1, 2, 0);
+            slight.position.set(2, 7, 3);
+            slight.angle = Math.PI / 5;
+            slight.penumbra = 0.2;
+            slight.castShadow = true;
+            slight.shadow.camera.near = 3;
+            slight.shadow.camera.far = 10;
+            slight.shadow.mapSize.width = 1024;
+            slight.shadow.mapSize.height = 1024;
+            return [dlight, slight];
+        }
+
+        function initParticles() {
+            var systems = [],
+                systemCount = 3;
+
+            var particleMaterial = new THREE.PointsMaterial({
+                color: 0x00afd8,
+                size: p.particleSize
+            });
+            for (var s = 0; s < systemCount; s++) {
+                var particleGeometry = new THREE.Geometry();
+                for (var i = 0; i < p.particleCount; i++) {
+                    var pX = Math.random() * 8 - 4,
+                        pY = Math.random() * 8 - 4,
+                        pZ = Math.random() * 8 - 4,
+                        particle = new THREE.Vector3(pX, pY, pZ);
+                    particleGeometry.vertices.push(particle);
+                }
+                systems.push(new THREE.Points(particleGeometry, particleMaterial));
+            }
+            return systems;
+        }
     };
 
     floatingIdol.draw = function() {
@@ -48,15 +113,26 @@ var floatingIdol = blankPattern({
             getVertices((boostbuffer - (boostbuffer - boost)) / 100),
             indices
         );
-        dirLight.position.x = Math.sin(sinetime / p.lightCycleTime);
-        dirLight.position.z = Math.cos(sinetime / (p.lightCycleTime * 2));
-        dirLight.position.y = Math.sin(sinetime / (p.lightCycleTime * 3));
+        moveLights();
+        particleSystems[0].rotation.x += 0.0001;
+        particleSystems[0].rotation.y -= 0.0007;
+        particleSystems[0].rotation.z -= 0.0002;
+
+        particleSystems[1].rotation.x += 0.00005;
+        particleSystems[1].rotation.y += 0.00008;
+        particleSystems[1].rotation.z -= 0.0001;
+
+        particleSystems[2].rotation.x -= 0.0001;
+        particleSystems[2].rotation.y += 0.0002;
+        particleSystems[2].rotation.z += 0.0001;
     };
 
     floatingIdol.destroy = function() {
-        scene.remove(dirLight);
+        for (var l = 0; l < lights.length; l++) {
+            scene.remove(lights[l]);
+            reset(lights[l]);
+        }
         scene.remove(object);
-        reset(dirLight);
         reset(object);
     };
 
@@ -85,16 +161,9 @@ var floatingIdol = blankPattern({
         ];
     }
 
-    function getIndices() {
-        return [
-            [0, 2, 5],
-            [0, 4, 2],
-            [1, 2, 4],
-            [1, 5, 2],
-            [0, 5, 3],
-            [0, 3, 4],
-            [1, 3, 5],
-            [1, 4, 3]
-        ];
+    function moveLights() {
+        lights[0].position.x = Math.sin(sinetime / p.lightCycleTime);
+        lights[0].position.z = Math.cos(sinetime / (p.lightCycleTime * 2));
+        lights[0].position.y = Math.sin(sinetime / (p.lightCycleTime * 3));
     }
 })();

@@ -17,6 +17,7 @@ var scene = new THREE.Scene(),
         y: 0
     };
 
+scene.add(new THREE.AmbientLight(0x505050));
 camera.position.z = -3;
 camera.position.x = -1;
 camera.position.y = 2;
