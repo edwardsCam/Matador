@@ -7,7 +7,7 @@ var sourceJs,
     audioAnalyser,
     beatTime = 60 / tempo,
     boost = 0,
-    boostbuffer,
+    boostbuffer = 0,
     fftSize = 512,
     smooth = 0.6,
     audioStarted = false;

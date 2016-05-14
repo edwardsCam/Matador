@@ -1,4 +1,4 @@
-(function(){
+window.addEventListener('load', function() {
     loadPattern(floatingIdol);
     animate();
 
@@ -9,14 +9,19 @@
         currentPattern.init();
     }
 
+    var rotateSpeed = 0;
+
     // renders the view every frame
     function animate() {
         clocktick();
         //camera.position.z += step;
-        controls.rotateLeft(0.0007);
+        if (rotateSpeed < 0.01) {
+            rotateSpeed += 0.00004;
+        }
+        controls.rotateLeft(rotateSpeed);
         controls.update();
         currentPattern.draw();
         renderer.render(scene, camera);
         requestAnimationFrame(animate);
     }
-})();
+});

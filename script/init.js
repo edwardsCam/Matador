@@ -1,6 +1,6 @@
 var scene, camera, renderer, geometry, controls, clock, time, sinetime, timebuff, delta, step, soundBuckets, currentPattern, movespeed, mousepos;
 
-window.addEventListener('load', function() {
+(function() {
     initGlobals();
 
     scene.add(new THREE.AmbientLight(0x505050));
@@ -46,4 +46,4 @@ window.addEventListener('load', function() {
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
-});
+})();
