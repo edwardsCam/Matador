@@ -7,6 +7,7 @@ function clocktick() {
     timebuff[0] += delta;
     if (audioStarted) {
         timebuff[1] += delta;
+        timebuff[2] += delta;
     }
 }
 

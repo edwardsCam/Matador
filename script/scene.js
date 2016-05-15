@@ -9,14 +9,16 @@ window.addEventListener('load', function() {
         currentPattern.init();
     }
 
-    var rotateSpeed = 0;
+    var rotateSpeed = 0,
+        rotateAccel = 0.00004,
+        maxRotateSpeed = 0.01;
 
     // renders the view every frame
     function animate() {
         clocktick();
         //camera.position.z += step;
-        if (rotateSpeed < 0.01) {
-            rotateSpeed += 0.00004;
+        if (rotateSpeed < maxRotateSpeed) {
+            rotateSpeed += rotateAccel;
         }
         controls.rotateLeft(rotateSpeed);
         controls.update();

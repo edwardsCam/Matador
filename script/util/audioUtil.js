@@ -1,5 +1,5 @@
-var url = 'resources/audio/delicate_steve_tallest_heights.mp3',
-    tempo = 105;
+var url = 'resources/audio/tender_lost.mp3',
+    tempo = 87;
 
 var sourceJs,
     audioContext,
@@ -10,7 +10,8 @@ var sourceJs,
     boostbuffer = 0,
     fftSize = 512,
     smooth = 0.6,
-    audioStarted = false;
+    audioStarted = false,
+    beatCount = 0;
 
 (function() {
     try {
@@ -61,12 +62,6 @@ var sourceJs,
                 boost += soundBuckets[i];
             }
             boost /= soundBuckets.length;
-            if (boostbuffer == undefined) {
-                boostbuffer = boost;
-            }
-            if (Math.abs(boostbuffer - boost) > 2) {
-                boostbuffer = boost;
-            }
         }
     }
 

@@ -5,8 +5,8 @@ var scene, camera, renderer, geometry, controls, clock, time, sinetime, timebuff
 
     scene.add(new THREE.AmbientLight(0x505050));
     camera.position.z = -3;
-    camera.position.x = -1;
-    camera.position.y = 2;
+    camera.position.x = 3;
+    //camera.position.y = -3;
     geometry.dynamic = true;
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x444444, 1);
@@ -25,7 +25,7 @@ var scene, camera, renderer, geometry, controls, clock, time, sinetime, timebuff
         clock = new THREE.Clock();
         time = 0;
         sinetime = 0;
-        timebuff = [0, 0]; // buffers to be used for time-based increment stuff
+        timebuff = [0, 0.25, 0.25]; // buffers to be used for time-based increment stuff
         delta = 0;
         step = 0; // the distance to move forward each frame
         soundBuckets = []; // buckets for sound values at each quantization level

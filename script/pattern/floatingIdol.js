@@ -6,7 +6,10 @@ var floatingIdol = blankPattern({
     cubeSize: 0.3,
     spread: 0.75,
     particleCount: 1000,
-    particleSize: 0.05
+    particleSize: 0.05,
+    particleColor: 0x00afd8,
+    reverb: 12,
+    damp: 0.04
 });
 
 (function() {
@@ -16,7 +19,11 @@ var floatingIdol = blankPattern({
         clipMaterial,
         object,
         lights,
-        particleSystems;
+        particleSystems,
+        target = 0.01,
+        clipRadius = 0.01,
+        reverbCount = 1,
+        reverbTime = beatTime / p.reverb;
 
     floatingIdol.init = function() {
         indices = initIndices();
@@ -86,7 +93,7 @@ var floatingIdol = blankPattern({
                 systemCount = 3;
 
             var particleMaterial = new THREE.PointsMaterial({
-                color: 0x00afd8,
+                color: p.particleColor,
                 size: p.particleSize
             });
             for (var s = 0; s < systemCount; s++) {
@@ -107,20 +114,28 @@ var floatingIdol = blankPattern({
     };
 
     floatingIdol.draw = function() {
-        var sLevel = (boostbuffer - (boostbuffer - boost)) / 100;
-        clipMaterial.clippingPlanes = buildPlanes(sLevel, indices);
         moveLights();
-        particleSystems[0].rotation.x += 0.001;
-        particleSystems[0].rotation.y -= 0.007;
-        particleSystems[0].rotation.z -= 0.002;
+        moveParticles();
 
-        particleSystems[1].rotation.x += 0.0005;
-        particleSystems[1].rotation.y += 0.0008;
-        particleSystems[1].rotation.z -= 0.001;
+        if (audioStarted) {
+            if (timebuff[2] >= reverbTime) {
+                timebuff[2] -= reverbTime;
 
-        particleSystems[2].rotation.x -= 0.001;
-        particleSystems[2].rotation.y += 0.002;
-        particleSystems[2].rotation.z += 0.001;
+                var reverbAmp = (p.reverb - reverbCount) / p.reverb;
+                reverbAmp *= p.damp;
+                reverbAmp *= target;
+                if (reverbCount % 2 === 0) reverbAmp *= -1;
+                clipRadius = target + reverbAmp;
+
+                if (++reverbCount > p.reverb) reverbCount = 1;
+            }
+            if (timebuff[1] >= beatTime) {
+                timebuff[1] -= beatTime;
+                target = (boost / 100) - 0.2;
+            }
+        }
+
+        clipMaterial.clippingPlanes = buildPlanes(clipRadius, indices);
     };
 
     floatingIdol.destroy = function() {
@@ -163,5 +178,17 @@ var floatingIdol = blankPattern({
         lights[0].position.x = Math.sin(sinetime / p.lightCycleTime);
         lights[0].position.z = Math.cos(sinetime / (p.lightCycleTime * 2));
         lights[0].position.y = Math.sin(sinetime / (p.lightCycleTime * 3));
+    }
+
+    function moveParticles() {
+        particleSystems[0].rotation.x += 0.001;
+        particleSystems[0].rotation.y -= 0.007;
+        particleSystems[0].rotation.z -= 0.002;
+        particleSystems[1].rotation.x += 0.0005;
+        particleSystems[1].rotation.y += 0.0008;
+        particleSystems[1].rotation.z -= 0.001;
+        particleSystems[2].rotation.x -= 0.001;
+        particleSystems[2].rotation.y += 0.002;
+        particleSystems[2].rotation.z += 0.001;
     }
 })();
