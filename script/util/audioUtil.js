@@ -6,12 +6,31 @@ var sourceJs,
     audioSource,
     audioAnalyser,
     beatTime = 60 / tempo,
-    boost = 0,
+    avgBoost = 0,
     boostbuffer = 0,
     fftSize = 512,
     smooth = 0.6,
     audioStarted = false,
-    beatCount = 0;
+    beatCount = 0,
+    beatSizes = [
+        0.2, 0.6, 0.4, 0.6,
+        0.2, 0.6, 0.4, 0.6,
+        0.2, 0.6, 0.4, 0.6,
+        0.2, 0.6, 0.4, 0.2,
+        0,   1,   0.8, 1,
+        0,   1,   0.8, 1,
+        0,   1,   0.8, 1,
+        0,   1,   0.8, 1,
+        0,   1,   0.8, 1,
+        0,   1,   0.8, 1,
+        0,   1,   0.8, 1,
+        0,   1,   0.8, 1,
+        0,   1,   0.8, 1,
+        0,   1,   0.8, 1,
+        0,   1,   0.8, 1,
+        0,   1,   0.8, 1,
+        0
+    ];
 
 (function() {
     try {
@@ -55,13 +74,15 @@ var sourceJs,
         play();
 
         function audioProcess(e) {
+            /*
             soundBuckets = new Uint8Array(audioAnalyser.frequencyBinCount);
             audioAnalyser.getByteFrequencyData(soundBuckets);
-            boost = 0;
+            avgBoost = 0;
             for (var i = 0; i < soundBuckets.length; i++) {
-                boost += soundBuckets[i];
+                avgBoost += soundBuckets[i];
             }
-            boost /= soundBuckets.length;
+            avgBoost /= soundBuckets.length;
+            */
         }
     }
 

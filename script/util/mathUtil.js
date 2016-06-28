@@ -34,7 +34,7 @@ function thetaFromCoord(x, y) {
                    |
                    |
                   270
-               (pi * 3/2)
+               (3pi/2)
 
 
     */

@@ -8,29 +8,34 @@ var floatingIdol = blankPattern({
     particleCount: 1000,
     particleSize: 0.05,
     particleColor: 0x00afd8,
-    reverb: 12,
-    damp: 0.04
+    reverb: 20,
+    damp: 15
 });
 
 (function() {
     var p = floatingIdol.params, // params shorthand
-        indices,
+        faceIndices,
         clipPlanes,
         clipMaterial,
-        object,
+        idol,
         lights,
         particleSystems,
         target = 0.01,
         clipRadius = 0.01,
+        diff = 0,
         reverbCount = 1,
         reverbTime = beatTime / p.reverb;
 
-    floatingIdol.init = function() {
-        indices = initIndices();
-        clipMaterial = initClipMaterial();
-        object = initShape();
-        particleSystems = initParticles();
+    var initFunc = function() {
+        faceIndices = initIndices();
+        clipMaterial = initClipMaterial(p.shapeColor, p.shapeShine);
+        idol = initShape(p.cubeSize, p.spread, p.rowSize, clipMaterial);
+        particleSystems = initParticles(p.particleCount, p.particleColor, p.particleSize, 3);
         lights = initLights();
+
+        particleSystems.forEach(addFunc);
+        lights.forEach(addFunc);
+        scene.add(idol);
 
         function initIndices() {
             return [
@@ -45,29 +50,37 @@ var floatingIdol = blankPattern({
             ];
         }
 
-        function initClipMaterial() {
+        function initClipMaterial(color, shine) {
+            /*
+            return new THREE.MeshDepthMaterial( {
+					depthPacking: THREE.RGBADepthPacking,
+				//	displacementMap: displacementMap,
+					displacementScale: 2.436143,
+					displacementBias: -0.428408,
+					side: THREE.DoubleSide
+				} );
+                */
             return new THREE.MeshPhongMaterial({
-                color: p.shapeColor,
-                shininess: p.shapeShine,
+                color: color,
+                shininess: shine,
                 side: THREE.DoubleSide,
-                clippingPlanes: buildPlanes(0, indices)
+                clippingPlanes: buildFaces(0, faceIndices)
             });
         }
 
-        function initShape() {
+        function initShape(cubeSize, spread, rowSize, clipMat) {
             var ret = new THREE.Group(),
-                box = new THREE.BoxBufferGeometry(p.cubeSize, p.cubeSize, p.cubeSize),
-                dist = p.spread * 2 / (p.rowSize - 1);
-            for (var z = -p.spread; z <= p.spread; z += dist) {
-                for (var y = -p.spread; y <= p.spread; y += dist) {
-                    for (var x = -p.spread; x <= p.spread; x += dist) {
-                        var mesh = new THREE.Mesh(box, clipMaterial);
+                box = new THREE.BoxBufferGeometry(cubeSize, cubeSize, cubeSize),
+                dist = spread * 2 / (rowSize - 1);
+            for (var z = -spread; z <= spread; z += dist) {
+                for (var y = -spread; y <= spread; y += dist) {
+                    for (var x = -spread; x <= spread; x += dist) {
+                        var mesh = new THREE.Mesh(box, clipMat);
                         mesh.position.set(x, y, z);
                         ret.add(mesh);
                     }
                 }
             }
-            scene.add(ret);
             return ret;
         }
 
@@ -83,37 +96,31 @@ var floatingIdol = blankPattern({
             slight.shadow.camera.far = 10;
             slight.shadow.mapSize.width = 1024;
             slight.shadow.mapSize.height = 1024;
-            scene.add(dlight);
-            scene.add(slight);
             return [dlight, slight];
         }
 
-        function initParticles() {
-            var systems = [],
-                systemCount = 3;
-
+        function initParticles(count, color, size, systemCount) {
+            var ret = [];
             var particleMaterial = new THREE.PointsMaterial({
-                color: p.particleColor,
-                size: p.particleSize
+                color: color,
+                size: size
             });
             for (var s = 0; s < systemCount; s++) {
                 var particleGeometry = new THREE.Geometry();
-                for (var i = 0; i < p.particleCount; i++) {
+                for (var i = 0; i < count; i++) {
                     var pX = Math.random() * 8 - 4,
                         pY = Math.random() * 8 - 4,
                         pZ = Math.random() * 8 - 4,
                         particle = new THREE.Vector3(pX, pY, pZ);
                     particleGeometry.vertices.push(particle);
                 }
-                var system = new THREE.Points(particleGeometry, particleMaterial);
-                scene.add(system);
-                systems.push(system);
+                ret.push(new THREE.Points(particleGeometry, particleMaterial));
             }
-            return systems;
+            return ret;
         }
     };
 
-    floatingIdol.draw = function() {
+    var drawFunc = function() {
         moveLights();
         moveParticles();
 
@@ -122,48 +129,51 @@ var floatingIdol = blankPattern({
                 timebuff[2] -= reverbTime;
 
                 var reverbAmp = (p.reverb - reverbCount) / p.reverb;
-                reverbAmp *= p.damp;
-                reverbAmp *= target;
+                reverbAmp /= p.damp;
+                reverbAmp *= diff;
                 if (reverbCount % 2 === 0) reverbAmp *= -1;
                 clipRadius = target + reverbAmp;
 
                 if (++reverbCount > p.reverb) reverbCount = 1;
             }
             if (timebuff[1] >= beatTime) {
+                var newTarget = beatSizes[beatCount];
+                diff = (newTarget - target) || 0;
+                target = newTarget || 0;
                 timebuff[1] -= beatTime;
-                target = (boost / 100) - 0.2;
+
+                beatCount++;
             }
         }
 
-        clipMaterial.clippingPlanes = buildPlanes(clipRadius, indices);
+        clipMaterial.clippingPlanes = buildFaces(clipRadius, faceIndices);
     };
 
-    floatingIdol.destroy = function() {
-        for (var l = 0; l < lights.length; l++) {
-            scene.remove(lights[l]);
-            reset(lights[l]);
-        }
-        scene.remove(object);
-        reset(object);
+    var destroyFunc = function() {
+        deleteFunc(particleSystems);
+        deleteFunc(lights);
+        deleteFunc(idol);
     };
 
-    function buildPlanes(r, indices) {
-        var vertices = getVertices(r);
-        var ret = [];
-        for (var i = 0; i < indices.length; i++) {
-            var v0 = indices[i][0],
-                v1 = indices[i][1],
-                v2 = indices[i][2];
-            ret.push(
-                new THREE.Plane().setFromCoplanarPoints(vertices[v0], vertices[v1], vertices[v2])
-            );
-        }
-        return ret;
+    floatingIdol.init = initFunc;
+    floatingIdol.draw = drawFunc;
+    floatingIdol.destroy = destroyFunc;
+
+    // given a radius, get the list of faces that make up the clipping planes
+    function buildFaces(radius, faceIndices) {
+        var vertices = getVertices(radius);
+        return _.map(faceIndices, function(i) {
+            var i0 = i[0],
+                i1 = i[1],
+                i2 = i[2];
+            return new THREE.Plane().setFromCoplanarPoints(vertices[i0], vertices[i1], vertices[i2]);
+        });
     }
 
-    function getVertices(r) {
-        var d = r * 2 / Math.SQRT2;
-        if (d === 0) d = Number.MIN_VALUE;
+    // given a radius,
+    function getVertices(radius) {
+        var d = radius * 2 / Math.SQRT2;
+        if (d === 0) d = 0.001;
         return [
             new THREE.Vector3(d, 0, 0),
             new THREE.Vector3(-d, 0, 0),
@@ -190,5 +200,16 @@ var floatingIdol = blankPattern({
         particleSystems[2].rotation.x -= 0.001;
         particleSystems[2].rotation.y += 0.002;
         particleSystems[2].rotation.z += 0.001;
+    }
+
+    function addFunc(obj) {
+        scene.add(obj);
+    }
+
+    function deleteFunc(obj) {
+        if (Array.isArray(obj)) {
+            obj.forEach(deleteFunc);
+        }
+        reset(obj);
     }
 })();

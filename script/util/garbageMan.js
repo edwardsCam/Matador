@@ -2,10 +2,11 @@ function reset(obj) {
     if (obj instanceof THREE.Camera) {
         obj = undefined;
     } else if (obj instanceof THREE.Light) {
-        obj.dispose();
+        if (obj.dispose) obj.dispose();
         obj = undefined;
     } else if (obj instanceof THREE.Mesh) {
         if (obj.geometry) {
+            if (obj.geometry.dispose) obj.geometry.dispose();
             obj.geometry.dispose();
             obj.geometry = undefined;
         }
@@ -34,9 +35,11 @@ function reset(obj) {
             }
         }
     } else if (obj instanceof THREE.Geometry) {
+        if (obj.dispose) obj.dispose();
         obj.dispose();
         obj = undefined;
     } else if (obj instanceof THREE.Object3D) {
         obj = undefined;
     }
+    scene.remove(obj);
 }
