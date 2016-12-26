@@ -1,4 +1,4 @@
-var url = 'resources/audio/tender_lost.mp3',
+var url = 'resources/audio/emancipator_maps.mp3',
     tempo = 87;
 
 var sourceJs,
@@ -74,7 +74,7 @@ var sourceJs,
         play();
 
         function audioProcess(e) {
-            /*
+
             soundBuckets = new Uint8Array(audioAnalyser.frequencyBinCount);
             audioAnalyser.getByteFrequencyData(soundBuckets);
             avgBoost = 0;
@@ -82,7 +82,7 @@ var sourceJs,
                 avgBoost += soundBuckets[i];
             }
             avgBoost /= soundBuckets.length;
-            */
+
         }
     }
 

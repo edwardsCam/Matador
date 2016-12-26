@@ -67,6 +67,6 @@ function twoPoint(value, x1, y1, x2, y2) {
     return result;
 }
 
-function randomRange(min, max) {
+Math.randomInRange = function(min, max) {
     return min + Math.random() * (max - min);
 }
